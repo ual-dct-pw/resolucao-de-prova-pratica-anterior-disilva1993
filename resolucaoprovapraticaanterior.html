@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+
+        function validateForm() {
+            //Recolher os inputs do utilizador
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var fullName = document.getElementById("fullName").value;
+            var email = document.getElementById("email").value;
+            var phone = document.getElementById("phone").value;
+            var text_area_just = document.getElementById("just").value;
+            var birthday_date = document.getElementById("bday").value;
+            var job = document.getElementById("job").value;
+            var gender = document.getElementById("gender").value;
+    
+             //verificar se o número de telemóvel começa por '9'
+            if (isNaN(phone) || phone.charAt(0) != "9"){
+                document.getElementById("formFeedback").style.color = "red";
+                document.getElementById("formFeedback").innerHTML = "Erro: número telemóvel deve começar por '9'";
+                document.getElementById("phone").focus();
+                
+                return false;
+            }
+    
+            
+            
+            else {
+                
+                // colocar aqui o alert com todos os dados inseridos e validados
+                document.getElementById("formFeedback").style.color = "green";
+                document.getElementById("formFeedback").innerHTML = "Ok!";
+                alert("Dados inseridos: \n Nome: "+username+" \n Password: "+password+" \n Nome completo: "+fullName+" \n Data nascimento: "+birthday_date+" \n Email: "+email+" \n Sexo: "+gender+" \n Emprego: "+job+" \n Telemóvel: "+phone+" \n Justificação: "+text_area_just+" ");
+            }
+            return false;
+            
+        }
+        
+        //API para receber uma password aleatório em formato json
+        function callPasswordAPI(){
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                 
+                 var myArr = JSON.parse(this.responseText);
+                 document.getElementById("password").value = myArr.pws;
+                }
+            };
+            xhttp.open("GET", "https://makemeapassword.ligos.net/api/v1/alphanumeric/json?c=1&l=8", true);
+            xhttp.send();
+        }
+        
+        //API para receber uma string aleatória (piada) em formato json
+        function callJokeAPI() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                 
+                 var myArr = JSON.parse(this.responseText);
+                 document.getElementById("joke").innerHTML = "Piada do dia: " + myArr.value.joke;
+                }
+            };
+            xhttp.open("GET", "http://api.icndb.com/jokes/random", true);
+            xhttp.send();
+        }
+      
+        
+    </script>
+
+</head>
+
+<body>
+
+    <h2 class="text-center mt-5">Job4All</h2>
+
+    <div class="container">
+        <form action="/action_page.php" onsubmit="return validateForm()" method="post">
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Username</label>
+                <input type="text" class="form-control" maxlength="10" minlength="4" required id="username" placeholder="username">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <input type="password" class="form-control" required id="password" placeholder="Automatic Password">
+                </div>
+                <div class="form-group col-md-3">
+                    <input type="button" class="btn btn-info" value="Get password" onclick="callPasswordAPI()">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Nome completo</label>
+                <input type="text" class="form-control" required id="fullName" placeholder="Nome completo">
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Data nascimento</label>
+                <input type="date" id="bday" class="form-control" required name="userbday" required placeholder="Data nascimento" />
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Email</label>
+                <input type="email" pattern="[a-zA-Z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*" required class="form-control" id="email" placeholder="Email">
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">Sexo</label>
+                <select class="form-control" required id="gender">
+                    <option>Selecione</option>
+                    <option>Masculino</option>
+                    <option>Feminino</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">Emprego</label>
+                <select class="form-control" required id="job">
+                    <option>Selecione</option>
+                    <option>Administrativo</option>
+                    <option>Comercial</option>
+                    <option>Desporto</option>
+                    <option>Técnico</option>
+                    <option>Outro</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Telemóvel</label>
+                <input type="text" class="form-control" id="phone" maxlength="9" placeholder="Nome completo">
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Justificação</label>
+                <textarea class="form-control" id="just" rows="10"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="submit"class="btn btn-primary" value="Submit">
+                <input type="reset"class="btn btn-danger" value="Reset">
+                <input type="button"class="btn btn-success" value="Piada do dia" onclick="callJokeAPI()">
+            </div>
+            <div class="form-group">
+                <p id="formFeedback"></p>
+	            <label id="joke"></label>
+            </div>
+        </form>
+    </div>
+    
+        
+</body>
+
+</html>
